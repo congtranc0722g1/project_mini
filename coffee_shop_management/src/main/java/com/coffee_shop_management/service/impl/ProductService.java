@@ -28,4 +28,14 @@ public class ProductService implements IProductService {
     public void addProduct(Product product) {
         productRepository.addProduct(product.getName(), product.getPrice(), product.getQuantity(),product.getDescription(),product.getCategory().getId());
     }
+
+    @Override
+    public Product getProduct(Integer id) {
+        return productRepository.getProduct(id);
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        productRepository.updateProduct(product.getName(), product.getPrice(), product.getQuantity(), product.getDescription(), product.getCategory().getId(), product.getId());
+    }
 }

@@ -22,7 +22,7 @@
                 <td>{{product.price}}</td>
                 <td style="width: 200px">{{product.description}}</td>
                 <td>
-                    <button class="btn btn-primary">Chỉnh sửa</button>
+                    <router-link :to="{name: 'product-update', params: {id: product.id}}"><button class="btn btn-primary">Chỉnh sửa</button></router-link>
                 </td>
                 <td>
                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="getInfoDeleteProduct(product.id, product.name)">Xóa</button>

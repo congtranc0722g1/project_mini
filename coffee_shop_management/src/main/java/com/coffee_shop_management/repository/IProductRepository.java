@@ -23,4 +23,12 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
     @Transactional
     @Query(value = "insert into product(name, price, quantity, description, category_id) value (:name, :price, :quantity, :description, :categoryId)", nativeQuery = true)
     void addProduct(@Param("name") String name, @Param("price") Double price, @Param("quantity") Integer quantity, @Param("description") String description, @Param("categoryId") Integer categoryId);
+
+    @Query(value = "select * from product where id = :id", nativeQuery = true)
+    Product getProduct(@Param("id") Integer id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update product set name = :name, price = :price, quantity = :quantity, description = :description, category_id = :categoryId where id = :id", nativeQuery = true)
+    void updateProduct(@Param("name") String name, @Param("price") Double price, @Param("quantity") Integer quantity, @Param("description") String description, @Param("categoryId") Integer categoryId, @Param("id") Integer id);
 }

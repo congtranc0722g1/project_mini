@@ -34,4 +34,23 @@ public class ProductController {
         productService.addProduct(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/detail/{id}")
+    private ResponseEntity<?> getProduct(@PathVariable("id") Integer id){
+        Product product = productService.getProduct(id);
+//        if (product != null){
+//            return new ResponseEntity<>(product, HttpStatus.OK);
+//        }else {
+//            return new ResponseEntity<>("errProduct",HttpStatus.BAD_REQUEST);
+//        }
+
+        return new ResponseEntity<>(product, HttpStatus.OK);
+
+    }
+
+    @PostMapping("/update")
+    private ResponseEntity<?> updateProduct(@RequestBody Product product){
+        productService.updateProduct(product);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

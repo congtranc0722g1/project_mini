@@ -10,4 +10,8 @@ public interface IProductService {
     void deleteProduct(Integer id);
 
     void addProduct(Product product);
+
+    Product getProduct(Integer id);
+
+    void updateProduct(Product product);
 }
