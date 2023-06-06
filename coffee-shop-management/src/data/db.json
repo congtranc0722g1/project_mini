@@ -1,0 +1,32 @@
+{
+  "products": [
+    {
+      "id": 3,
+      "name": "SP3",
+      "category": "Bánh",
+      "price": 50000,
+      "description": "Hàng Vip"
+    },
+    {
+      "id": 4,
+      "name": "SP4",
+      "category": "Bánh",
+      "price": 50000,
+      "description": "Hàng Vip"
+    },
+    {
+      "id": 5,
+      "name": "SP5",
+      "category": "Bánh",
+      "price": 50000,
+      "description": "Hàng Vip"
+    },
+    {
+      "id": 6,
+      "name": "SP6",
+      "category": "Bánh",
+      "price": 50000,
+      "description": "Hàng Vip"
+    }
+  ]
+}
