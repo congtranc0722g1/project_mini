@@ -18,7 +18,8 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <input type="text" id="name" name="name" placeholder="Nhập tên sản phẩm"
-                                           class="form-control form-control-md" v-model="product.name"/>
+                                           class="form-control form-control-md" @blur="validate" v-model="product.name"/>
+                                    <p style="color: red; position: absolute">{{errors.name}}</p>
 
 
                                 </div>
@@ -33,10 +34,11 @@
                                 </div>
                                 <div style="position: relative" class="col-md-8 pe-4">
 
-                                    <select class="form-control form-control-md" id="category" name="category" v-model="product.category">
+                                    <select class="form-control form-control-md" id="category" name="category" @change="validate" v-model="product.category">
                                         <option value="">Chọn loại sản phẩm</option>
                                         <option :key="index" v-for="(category, index) in categoryList" :value="category">{{category.name}}</option>
                                     </select>
+                                    <p style="color: red; position: absolute">{{errors.category}}</p>
 
                                 </div>
                             </div>
@@ -51,7 +53,8 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <input type="text" id="price" name="price" placeholder="Nhập giá"
-                                           class="form-control form-control-md" v-model="product.price"/>
+                                           class="form-control form-control-md" @blur="validate" v-model="product.price"/>
+                                    <p style="color: red; position: absolute">{{errors.price}}</p>
 
                                 </div>
                             </div>
@@ -66,7 +69,8 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <input type="text" id="quantity" name="quantity"
-                                           placeholder="Nhập số lượng" class="form-control form-control-md" v-model="product.quantity"/>
+                                           placeholder="Nhập số lượng" class="form-control form-control-md" @blur="validate" v-model="product.quantity"/>
+                                    <p style="color: red; position: absolute">{{errors.quantity}}</p>
 
                                 </div>
                             </div>
@@ -81,14 +85,16 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <textarea type="text" id="description" name="description" placeholder="Nhập mô tả"
-                                              class="form-control form-control-md" v-model="product.description"/>
+                                              class="form-control form-control-md" @blur="validate" v-model="product.description"/>
+                                    <p style="color: red; position: absolute">{{errors.description}}</p>
 
                                 </div>
                             </div>
 
                             <div class=" text-center">
                                 <button type="submit" class="btn btn-outline-primary m-4 w-25">Cập nhật</button>
-                                <button type="reset" class="btn btn-outline-secondary m-4 w-25">Hủy</button>
+                                <router-link to="/"><button type="reset" class="btn btn-outline-secondary m-4 w-25">Hủy</button></router-link>
+
 
                             </div>
 
@@ -109,6 +115,13 @@
         data(){
             return {
                 categoryList: [],
+                errors: {
+                    name: "",
+                    category: "",
+                    price: "",
+                    quantity: "",
+                    description: "",
+                },
                 product: {
                     id: "",
                     name: "",
@@ -129,6 +142,60 @@
             this.getProduct(productId);
         },
         methods: {
+            validate(){
+                let isValid = true;
+                this.errors = {
+                    name: "",
+                    category: "",
+                    price: "",
+                    quantity: "",
+                    description: ""
+                }
+
+                if (!this.product.name){
+                    this.errors.name = "Không được để trống"
+                    isValid = false;
+                }else if (this.product.name.length > 200){
+                    this.errors.name = "Tên không được quá 200 ký tự"
+                    isValid = false;
+                }
+                if (!this.product.category.id){
+                    this.errors.category = "Không được để trống"
+                    isValid = false;
+                }
+                if (!this.product.price){
+                    this.errors.price = "Không được để trống"
+                    isValid = false;
+                }else if (this.product.price < 1){
+                    this.errors.price = "Số tiền phải lớn hơn 0"
+                    isValid = false;
+                }else if (!this.isNumber(this.product.price)){
+                    this.errors.quantity = "Số tiền phải là một số"
+                    isValid = false;
+                }
+                if (!this.product.quantity){
+                    this.errors.quantity = "Không được để trống"
+                    isValid = false;
+                }else if (this.product.quantity < 1){
+                    this.errors.quantity = "Số lượng phải lớn hơn 0"
+                    isValid = false;
+                }else if (!this.isNumber(this.product.quantity)){
+                    this.errors.quantity = "Số lượng phải là một số"
+                    isValid = false;
+                }
+                if (!this.product.description){
+                    this.errors.description = "Không được để trống"
+                    isValid = false;
+                }else if (this.product.description.length > 500){
+                    this.errors.description = "Mô tả không được quá 500 ký tự"
+                    isValid = false;
+                }
+                return isValid
+            },
+
+            isNumber(number){
+                return /^\d*$/.test(number)
+            },
             getCategoryList(){
                 this.$request.get("http://localhost:8080/categories").then(data => {
                     this.categoryList = data.data
@@ -141,10 +208,12 @@
                 })
             },
             update(){
-                this.$request.post("http://localhost:8080/products/update", this.product).then(() => {
-                    this.$router.push({name: "product-list"})
-                    Swal.fire("Thành Công", "Cập nhật thành Công", "success")
-                })
+                if (this.validate()){
+                    this.$request.post("http://localhost:8080/products/update", this.product).then(() => {
+                        this.$router.push({name: "product-list"})
+                        Swal.fire("Thành Công", "Cập nhật thành Công", "success")
+                    })
+                }
             }
         }
 

@@ -1,12 +1,31 @@
 <template>
     <div class="container-fluid" style="margin-top: 60px">
         <h1 class="text-center">Danh sách sản phẩm</h1>
-        <router-link to="/product/create"><button class="btn btn-primary">Thêm mới sản phẩm</button></router-link>
+        <div class="row">
+            <div class="col-6" >
+                <router-link to="/product/create">
+                    <button class="btn btn-primary">Thêm mới sản phẩm</button>
+                </router-link>
+            </div>
+            <div class="col-6" >
+                <div class="d-flex">
+                    <input style="width: 250px" type="text" name="quantity"
+                           placeholder="Nhập số lượng" class="form-control form-control-md me-2"/>
+                    <select style="width: 250px" class="form-control form-control-md w-25" name="category">
+                        <option value="">Chọn loại sản phẩm</option>
+                        <option :key="index" v-for="(category, index) in categoryList" :value="category">{{category.name}}</option>
+                    </select>
+                    <button class="btn btn-success">Tìm kiếm</button>
+                </div>
+
+            </div>
+        </div>
+
         <table class="table mt-2">
             <thead>
             <tr style="background-color: aqua" class="text-center">
                 <th scope="col">STT</th>
-                <th scope="col">Tên Sản Phảm</th>
+                <th scope="col">Tên Sản Phẩm</th>
                 <th scope="col">Danh Mục</th>
                 <th scope="col">Giá</th>
                 <th scope="col">Mô tả</th>
@@ -119,6 +138,7 @@
         name: "product-list",
         data(){
             return {
+                categoryList: [],
                 products: [],
                 product: {},
                 page: 0,
@@ -128,8 +148,14 @@
         created() {
             // this.getListProduct(this.page);
             this.changePage(this.page)
+            this.getCategoryList()
         },
         methods: {
+            getCategoryList(){
+                this.$request.get("http://localhost:8080/categories").then(data => {
+                    this.categoryList = data.data
+                })
+            },
             // getListProduct(id){
             //     this.$request.get("http://localhost:8080/products?page=" + id).then(data => {
             //         this.products = data.data.content
