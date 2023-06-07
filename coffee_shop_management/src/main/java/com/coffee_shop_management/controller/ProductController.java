@@ -18,8 +18,14 @@ public class ProductController {
     private IProductService productService;
 
     @GetMapping("")
-    private ResponseEntity<Page<Product>> showListProduct(@PageableDefault(size = 5) Pageable pageable) {
-        Page<Product> productList = productService.getProductList(pageable);
+    private ResponseEntity<Page<Product>> showListProduct(@RequestParam("nameSearch") String nameSearch, @RequestParam("categoryId") Integer categoryId, @PageableDefault(size = 5) Pageable pageable) {
+//        Page<Product> productList = productService.getProductList(pageable);
+        Page<Product> productList = null;
+        if (categoryId == -1){
+            productList = productService.findName(nameSearch, pageable);
+        }else {
+            productList = productService.findNameAndCategory(nameSearch, categoryId, pageable);
+        }
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 

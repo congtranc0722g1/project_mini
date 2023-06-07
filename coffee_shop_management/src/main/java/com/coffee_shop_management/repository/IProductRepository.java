@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface IProductRepository extends JpaRepository<Product, Integer> {
 
     @Query(value = "select * from product", nativeQuery = true)
@@ -31,4 +33,10 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
     @Transactional
     @Query(value = "update product set name = :name, price = :price, quantity = :quantity, description = :description, category_id = :categoryId where id = :id", nativeQuery = true)
     void updateProduct(@Param("name") String name, @Param("price") Double price, @Param("quantity") Integer quantity, @Param("description") String description, @Param("categoryId") Integer categoryId, @Param("id") Integer id);
+
+    @Query(value = "select * from product where name like concat('%', :name, '%')", nativeQuery = true)
+    Page<Product> findName(@Param("name") String name, Pageable pageable);
+
+    @Query(value = "select * from product where name like concat('%', :name, '%') and category_id = :categoryId", nativeQuery = true)
+    Page<Product> findNameAndCategory(@Param("name") String name, @Param("categoryId") Integer categoryId, Pageable pageable);
 }

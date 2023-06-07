@@ -2,20 +2,20 @@
     <div class="container-fluid" style="margin-top: 60px">
         <h1 class="text-center">Danh sách sản phẩm</h1>
         <div class="row">
-            <div class="col-6" >
+            <div class="col-lg-4" >
                 <router-link to="/product/create">
                     <button class="btn btn-primary">Thêm mới sản phẩm</button>
                 </router-link>
             </div>
-            <div class="col-6" >
+            <div class="col-lg-8" >
                 <div class="d-flex">
                     <input style="width: 250px" type="text" name="quantity"
-                           placeholder="Nhập số lượng" class="form-control form-control-md me-2"/>
-                    <select style="width: 250px" class="form-control form-control-md w-25" name="category">
-                        <option value="">Chọn loại sản phẩm</option>
-                        <option :key="index" v-for="(category, index) in categoryList" :value="category">{{category.name}}</option>
+                           placeholder="Nhập tên sản phẩm" class="form-control form-control-md me-2" :value="inputValues[0]" @input="updateValue(0)"/>
+                    <select style="width: 350px" class="form-control form-control-md w-25" name="category" :value="inputValues[1]" @input="updateValue(1)">
+                        <option :value="-1">Chọn loại sản phẩm</option>
+                        <option :key="index" v-for="(category, index) in categoryList" :value="category.id">{{category.name}}</option>
                     </select>
-                    <button class="btn btn-success">Tìm kiếm</button>
+                    <button class="btn btn-success ms-2" type="button" @click="changePage(page)">Tìm kiếm</button>
                 </div>
 
             </div>
@@ -116,7 +116,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Xóa sản phẩm</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -138,6 +138,7 @@
         name: "product-list",
         data(){
             return {
+                inputValues: ['', -1],
                 categoryList: [],
                 products: [],
                 product: {},
@@ -151,6 +152,9 @@
             this.getCategoryList()
         },
         methods: {
+            updateValue(index) {
+                this.inputValues[index] = event.target.value;
+            },
             getCategoryList(){
                 this.$request.get("http://localhost:8080/categories").then(data => {
                     this.categoryList = data.data
@@ -174,7 +178,7 @@
                 })
             },
             changePage(page){
-                this.$request.get("http://localhost:8080/products?page=" + page).then(data => {
+                this.$request.get("http://localhost:8080/products?nameSearch=" +this.inputValues[0] + "&categoryId=" + this.inputValues[1] +"&page=" + page).then(data => {
                     this.products = data.data.content
                     this.productPage = data.data
                     this.page = page
