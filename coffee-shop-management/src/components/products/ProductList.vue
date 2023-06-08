@@ -181,12 +181,10 @@
                 this.$request.get("http://localhost:8080/products?nameSearch=" +this.inputValues[0] + "&categoryId=" + this.inputValues[1] +"&page=" + page).then(data => {
                     this.products = data.data.content
                     this.productPage = data.data
-                    this.page = page
                     if (data.data.numberOfElements < 1){
-                        console.log(data.data.numberOfElements < 1)
-                        this.page = page -1
+                        this.changePage(this.page-1)
                     }
-                    console.log(data.data)
+                    this.page = page
                 })
             }
         }

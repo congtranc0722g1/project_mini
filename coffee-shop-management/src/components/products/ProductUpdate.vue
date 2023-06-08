@@ -18,7 +18,7 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <input type="text" id="name" name="name" placeholder="Nhập tên sản phẩm"
-                                           class="form-control form-control-md" @blur="validate" v-model="product.name"/>
+                                           class="form-control form-control-md" v-bind:class="{'is-invalid': errors.name, 'is-valid': product.name}" @input="validate" v-model="product.name"/>
                                     <p style="color: red; position: absolute">{{errors.name}}</p>
 
 
@@ -34,7 +34,7 @@
                                 </div>
                                 <div style="position: relative" class="col-md-8 pe-4">
 
-                                    <select class="form-control form-control-md" id="category" name="category" @change="validate" v-model="product.category">
+                                    <select class="form-control form-control-md" id="category" name="category" v-bind:class="{'is-invalid': errors.category, 'is-valid': product.category.id}" @change="validate" v-model="product.category">
                                         <option value="">Chọn loại sản phẩm</option>
                                         <option :key="index" v-for="(category, index) in categoryList" :value="category">{{category.name}}</option>
                                     </select>
@@ -53,7 +53,7 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <input type="text" id="price" name="price" placeholder="Nhập giá"
-                                           class="form-control form-control-md" @blur="validate" v-model="product.price"/>
+                                           class="form-control form-control-md" v-bind:class="{'is-invalid': errors.price, 'is-valid': product.price}" @input="validate" v-model="product.price"/>
                                     <p style="color: red; position: absolute">{{errors.price}}</p>
 
                                 </div>
@@ -69,7 +69,7 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <input type="text" id="quantity" name="quantity"
-                                           placeholder="Nhập số lượng" class="form-control form-control-md" @blur="validate" v-model="product.quantity"/>
+                                           placeholder="Nhập số lượng" class="form-control form-control-md" v-bind:class="{'is-invalid': errors.quantity, 'is-valid': product.quantity}" @input="validate" v-model="product.quantity"/>
                                     <p style="color: red; position: absolute">{{errors.quantity}}</p>
 
                                 </div>
@@ -85,7 +85,7 @@
                                 <div style="position: relative" class="col-md-8 pe-4">
 
                                     <textarea type="text" id="description" name="description" placeholder="Nhập mô tả"
-                                              class="form-control form-control-md" @blur="validate" v-model="product.description"/>
+                                              class="form-control form-control-md" @input="validate" v-bind:class="{'is-invalid': errors.description, 'is-valid': product.description}" v-model="product.description"/>
                                     <p style="color: red; position: absolute">{{errors.description}}</p>
 
                                 </div>
@@ -170,7 +170,7 @@
                     this.errors.price = "Số tiền phải lớn hơn 0"
                     isValid = false;
                 }else if (!this.isNumber(this.product.price)){
-                    this.errors.quantity = "Số tiền phải là một số"
+                    this.errors.price = "Số tiền phải là một số"
                     isValid = false;
                 }
                 if (!this.product.quantity){
@@ -212,6 +212,23 @@
                     this.$request.post("http://localhost:8080/products/update", this.product).then(() => {
                         this.$router.push({name: "product-list"})
                         Swal.fire("Thành Công", "Cập nhật thành Công", "success")
+                    }).catch(error => {
+                        for (let i = 0; i < error.response.data.length; i++) {
+                            if (error.response.data[i].field === "name"){
+                                this.errors.name = error.response.data[i].defaultMessage
+                            }
+                            if (error.response.data[i].field === "price"){
+                                this.errors.price = error.response.data[i].defaultMessage
+                            }
+                            if (error.response.data[i].field === "quantity"){
+                                this.errors.quantity = error.response.data[i].defaultMessage
+                            }
+                            if (error.response.data[i].field === "description"){
+                                this.errors.description = error.response.data[i].defaultMessage
+                            }
+
+                        }
+                        console.log(error.response.data)
                     })
                 }
             }

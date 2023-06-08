@@ -1,13 +1,17 @@
 package com.coffee_shop_management.controller;
 
+import com.coffee_shop_management.dto.ProductDto;
 import com.coffee_shop_management.model.Product;
 import com.coffee_shop_management.service.IProductService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,7 +40,13 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    private ResponseEntity<?> addProduct(@RequestBody Product product){
+    private ResponseEntity<?> addProduct(@RequestBody @Validated ProductDto productDto, BindingResult bindingResult){
+
+        if (bindingResult.hasErrors()){
+            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
+        Product product = new Product();
+        BeanUtils.copyProperties(productDto, product);
         productService.addProduct(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -55,7 +65,12 @@ public class ProductController {
     }
 
     @PostMapping("/update")
-    private ResponseEntity<?> updateProduct(@RequestBody Product product){
+    private ResponseEntity<?> updateProduct(@RequestBody @Validated ProductDto productDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
+        Product product = new Product();
+        BeanUtils.copyProperties(productDto, product);
         productService.updateProduct(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
